@@ -6,7 +6,7 @@ using TMPro;
 
 public class Score : MonoBehaviour
 {
-    private int score = 0;
+    public int score = 0;
     private int prevCount = 0;
     private int presCount = 0;
 

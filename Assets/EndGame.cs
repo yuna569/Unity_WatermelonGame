@@ -7,7 +7,7 @@ using UnityEngine.SceneManagement;
 
 public class EndGame : MonoBehaviour
 {
-    private float stayCount = 0;     
+    //private float stayCount = 0;     
     
     private bool gameover = false;
 
@@ -24,6 +24,10 @@ public class EndGame : MonoBehaviour
     private Color changeColor;
     private SpriteRenderer renderer;
 
+    private Coroutine end;
+
+    private bool secondTrigger = false;
+
     void Awake()
     {
         scoreText = GameObject.Find("ScoreText (TMP)");
@@ -37,29 +41,27 @@ public class EndGame : MonoBehaviour
         changeColor = new Color(250f / 255f, 136f / 255f, 0f / 255f);
     }
 
-    void OnTriggerStay2D(Collider2D collider)
+    void OnTriggerEnter2D(Collider2D collider)
     {
         renderer.color = Color.cyan;
 
-        stayCount += Time.deltaTime;
+        if (secondTrigger) { end = StartCoroutine(End()); }
+
+        secondTrigger = true;
         //Debug.Log("stayCount: " + stayCount + ", Stay: " + collider.name);
     }
 
     void OnTriggerExit2D(Collider2D collider)
     {
         renderer.color = originalColor;
-        stayCount = 0;
+        //stayCount = 0;
+        StopCoroutine(end);
 
         //Debug.Log("stayCount: " + stayCount + ", Exit: " + collider.name);
     }
 
     void Update()
-    {
-        if ( stayCount >= 3 )
-        {
-            End();
-        }
-        
+    {   
         if( gameover )
         {
             Debug.Log("Game Over");
@@ -70,8 +72,10 @@ public class EndGame : MonoBehaviour
         }
     }
 
-    public void End()           
+    IEnumerator End()           
     {
+        yield return new WaitForSeconds(3);
+
         gameover = true;
 
         //pop.Pop();
@@ -81,12 +85,12 @@ public class EndGame : MonoBehaviour
         //int score = sco.SetScore(pop.bonus);
         int score = sco.GetScore();
 
-        float bestScore = PlayerPrefs.GetFloat("BestScore");     // Å° Á¸ÀçÇÏÁö ¾ÊÀ»½Ã ±âº»°ª(0) ¹ÝÈ¯
+        float bestScore = PlayerPrefs.GetFloat("BestScore");     // Å° ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½âº»ï¿½ï¿½(0) ï¿½ï¿½È¯
 
         if (score > bestScore)
         {
             bestScore = score;
-            PlayerPrefs.SetFloat("BestScore", bestScore);     // ·ÎÄÃ¿¡ ÆÄÀÏ·Î °ª ÀúÀå(Å°-°ª)
+            PlayerPrefs.SetFloat("BestScore", bestScore);     // ï¿½ï¿½ï¿½Ã¿ï¿½ ï¿½ï¿½ï¿½Ï·ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½(Å°-ï¿½ï¿½)
         }
 
         recordText.text = "Best Record: " + (int)bestScore;

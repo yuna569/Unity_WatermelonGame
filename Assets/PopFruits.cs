@@ -7,14 +7,19 @@ public class PopFruits : MonoBehaviour
     private GameObject fruits;
     private int children;
 
-    private GameObject score;
+    private Score score;
 
     public int bonus = 0;
 
     void Awake()
     {
         fruits = GameObject.Find("Fruits");
-        score = GameObject.Find("Score");
+        score = GameObject.Find("ScoreText (TMP)").GetComponent<Score>();
+    }
+
+    private void OnEnable()
+    {
+        Pop();
     }
 
     public void Pop()
@@ -66,7 +71,14 @@ public class PopFruits : MonoBehaviour
             Destroy(kid.gameObject);
             children--;
 
-        } while (children > 1);
+            score.score += bonus;
 
+        } while (children > 0);
+        StartCoroutine(WaitForPop());
+    }
+
+    IEnumerator WaitForPop()
+    {
+        yield return new WaitForSeconds(0.1f);
     }
 }
